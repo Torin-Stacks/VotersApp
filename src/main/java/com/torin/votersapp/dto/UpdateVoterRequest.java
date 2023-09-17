@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 
-public class VoterRegistrationRequest {
+public class UpdateVoterRequest {
     private String firstName;
     private String lastName;
     private Address address;
@@ -15,5 +15,4 @@ public class VoterRegistrationRequest {
     private String email;
     private String password;
     private String gender;
-
 }

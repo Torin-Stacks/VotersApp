@@ -18,4 +18,29 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleWrongBirthMonthException(WrongBirthMonthException exception){
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(VoterNotFoundException.class)
+    public ResponseEntity<?> handleVoterNotFound(VoterNotFoundException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<?> handlePasswordNotFound(WrongPasswordException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(WrongVoterCardNumberException.class)
+    public ResponseEntity<?> handleWrongVoterCardNumberException(WrongVoterCardNumberException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(CandidateNotFoundException.class)
+    public ResponseEntity<?> handleCandidateNotFoundException(CandidateNotFoundException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(WrongCandidateIdentificationNumberException.class)
+    public ResponseEntity<?> handleWrongCandidateIdentificationNumberException(WrongCandidateIdentificationNumberException exception){
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
+

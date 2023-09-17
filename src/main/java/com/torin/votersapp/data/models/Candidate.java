@@ -22,7 +22,8 @@ public class Candidate {
     private String birthYear;
     @Column(nullable = false, unique = true)
     private String email;
-
+    @Column(nullable = false)
+    private String password;
     @Column(nullable = false)
     private String gender;
     @Id
@@ -31,9 +32,11 @@ public class Candidate {
 
     @OneToOne
     private PoliticalParty politicalParty;
-
+    private String politicalPartyIdentificationNumber;
     @OneToOne
     private Election election;
+
+    private String candidateIdentificationNumber;
 
     private long numberOfVotes;
 }

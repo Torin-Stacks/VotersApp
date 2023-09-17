@@ -9,7 +9,7 @@ import java.time.LocalTime;
 @Entity
 
 public class Election {
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private String type;
     @Column(nullable = false)
     private LocalDate date;

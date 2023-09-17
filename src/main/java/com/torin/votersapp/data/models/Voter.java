@@ -26,6 +26,8 @@ public class Voter {
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
     private String gender;
     private boolean canVote;
     private String votersCardNumber;

@@ -1,11 +1,16 @@
 package com.torin.votersapp.dto;
 
 import com.torin.votersapp.data.models.Address;
+import com.torin.votersapp.data.models.Election;
+import com.torin.votersapp.data.models.PoliticalParty;
+import jakarta.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
+public class CandidateRegistrationRequest {
 
-public class VoterRegistrationRequest {
     private String firstName;
     private String lastName;
     private Address address;
@@ -15,5 +20,8 @@ public class VoterRegistrationRequest {
     private String email;
     private String password;
     private String gender;
+    private PoliticalParty politicalParty;
+    private String politicalPartyIdentificationNumber;
+    private Election election;
 
 }
