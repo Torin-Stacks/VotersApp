@@ -1,11 +1,14 @@
 package com.torin.votersapp.data.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.springframework.lang.NonNull;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "Voter")
 public class Voter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +32,10 @@ public class Voter {
     private String password;
     @Column(nullable = false)
     private String gender;
-    private boolean canVote;
     private String votersCardNumber;
+    private boolean hasVoted ;
 
-
+    public boolean getHasVoted() {
+        return hasVoted;
+    }
 }

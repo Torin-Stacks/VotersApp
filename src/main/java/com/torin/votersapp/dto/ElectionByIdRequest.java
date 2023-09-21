@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CandidateChoiceRequest {
-    String candidateIdentificationNumber;
-    String voterCardNumber;
+public class ElectionByIdRequest {
+    private String electionIdentificationNumber;
+
 }

@@ -1,9 +1,6 @@
 package com.torin.votersapp.controllers;
 
-import com.torin.votersapp.dto.PoliticalPartyRegistrationRequest;
-import com.torin.votersapp.dto.PoliticalPartyRegistrationResponse;
-import com.torin.votersapp.dto.VoterRegistrationRequest;
-import com.torin.votersapp.dto.VoterRegistrationResponse;
+import com.torin.votersapp.dto.*;
 import com.torin.votersapp.services.IPoliticalPartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +21,11 @@ public class PoliticalPartyController {
     @GetMapping("/political_parties")
     public ResponseEntity<?> getAllPoliticalParties(){
         return new ResponseEntity<>(iPoliticalPartyService.findAllPoliticalParties(), HttpStatus.OK);
+    }
+    @PostMapping("/update_political_Party")
+    public PoliticalPartyUpdateResponse Update (@RequestBody PoliticalPartyUpdateRequest politicalPartyUpdateRequest){
+        return iPoliticalPartyService.update(politicalPartyUpdateRequest);
+
     }
 
 }

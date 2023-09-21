@@ -1,10 +1,17 @@
 package com.torin.votersapp.data.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "Candidate")
 
 public class Candidate {
     @Column(nullable = false)
@@ -26,17 +33,19 @@ public class Candidate {
     private String password;
     @Column(nullable = false)
     private String gender;
+    @Column(nullable = false)
+    private String electionType;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToOne
-    private PoliticalParty politicalParty;
     private String politicalPartyIdentificationNumber;
-    @OneToOne
-    private Election election;
-
+    private String electionIdentificationNumber;
     private String candidateIdentificationNumber;
-
     private long numberOfVotes;
+
+    //    @OneToOne( cascade = CascadeType.ALL)
+//    private PoliticalParty politicalParty;
+
+    //    @OneToOne( cascade = CascadeType.ALL)
+//    private Election election;
 }

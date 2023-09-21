@@ -2,6 +2,7 @@ package com.torin.votersapp.controllers;
 
 import com.torin.votersapp.data.models.Candidate;
 import com.torin.votersapp.dto.*;
+import com.torin.votersapp.exceptions.WrongBirthDateException;
 import com.torin.votersapp.services.IVoterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class VoterController {
     private final IVoterService iVoterService;
 
     @PostMapping("/register_voter")
-    public VoterRegistrationResponse register(@RequestBody VoterRegistrationRequest voterRegistrationRequest){
+    public VoterRegistrationResponse register(@RequestBody VoterRegistrationRequest voterRegistrationRequest) throws WrongBirthDateException {
         return iVoterService.register(voterRegistrationRequest);
     }
 
@@ -28,10 +29,15 @@ public class VoterController {
         return iVoterService.login(voterLoginRequest);
     }
 
-    @GetMapping("/candidate_list")
-    public List<Candidate> listOfCandidatesAndPoliticalParty(@RequestBody ElectionTypeRequest electionTypeRequest){
-        return iVoterService.getCandidateList(electionTypeRequest);
+    @GetMapping("/candidate_by_election_type_list")
+    public List<Candidate> listOfCandidatesForAParticularElectionType(@RequestBody ElectionTypeRequest electionTypeRequest){
+        return iVoterService.getCandidateListByElectionType(electionTypeRequest);
     }
+    @GetMapping("/candidate_by_id_list")
+    public List<Candidate> listOfCandidatesForAParticularElectionByElectionId(@RequestBody ElectionByIdRequest electionByIdRequest){
+        return iVoterService.getCandidateListByElectionIdentificationNumber(electionByIdRequest);
+    }
+
 
     @PostMapping("/cast_vote")
     public ResponseEntity<?> electedChoice(@RequestBody CandidateChoiceRequest candidateChoiceRequest){

@@ -20,37 +20,41 @@ public class CandidateService implements ICandidateService{
     private final IPoliticalPartyService iPoliticalService;
 
     @Override
-    public List<Candidate> findAllCandidatesForAParticularElection(ElectionTypeRequest electionTypeRequest) {
-        return candidateRepository.findByElection_Type(electionTypeRequest.getElectionType());
+    public List<Candidate> findAllCandidatesForAParticularElectionWithElectionType(ElectionTypeRequest electionTypeRequest) {
+        return candidateRepository.findByElectionType(electionTypeRequest.getElectionType());
     }
 
-    @Override
-    public ResponseEntity<?> receiveCastedVote(CandidateChoiceRequest candidateChoiceRequest) {
-     Candidate foundCandidate =   candidateRepository.findByCandidateIdentificationNumber(candidateChoiceRequest.getCandidateIdentificationNumber());
-     if(foundCandidate == null){
-         throw new CandidateNotFoundException("you have entered the wrong candidate Identification number");
-     }
-     foundCandidate.setNumberOfVotes(foundCandidate.getNumberOfVotes()+1);
-     //am I supposed to update here?
-     return new ResponseEntity<>("You have voted", HttpStatus.OK);
+//    @Override
+//    public ResponseEntity<?> receiveCastedVote(CandidateChoiceRequest candidateChoiceRequest) {
+//     Candidate foundCandidate =   candidateRepository.findByCandidateIdentificationNumber(candidateChoiceRequest.getCandidateIdentificationNumber());
+//     Voter foundVoter = iVoterService.findVoterByVotersCardNumber(candidateChoiceRequest.getVoterCardNumber());
+//
+//     if(foundCandidate == null || foundVoter.getHasVoted() == true){
+//         throw new CandidateNotFoundException("you cannot vote, candidate not found");
+//     }
+//     foundCandidate.setNumberOfVotes(foundCandidate.getNumberOfVotes()+1);
+//     candidateRepository.save(foundCandidate);
+//      foundVoter.setHasVoted(true);
+//      iVoterService.save(foundVoter);
+//     return new ResponseEntity<>("You have voted", HttpStatus.OK);
+//
+//    }
 
-    }
-
     @Override
-    public Candidate getElectionWinner(ElectionTypeRequest electionTypeRequest) {
-        List<Candidate> listOfAllCandidatesForParticularElectionTYpe = findAllCandidatesForAParticularElection(electionTypeRequest);
+    public Candidate getElectionWinner(ElectionByIdRequest electionByIdRequest) {
+        List<Candidate> listOfAllCandidatesForParticularElectionByIdNumber = findAllCandidatesForAParticularElectionWithElectionIdentificationNumber(electionByIdRequest);
         long maxVote = 0;
         Candidate candidateWithHighestVote = null;
 
-        for(int i = 0; i < listOfAllCandidatesForParticularElectionTYpe.size();i++){
-            if(listOfAllCandidatesForParticularElectionTYpe.get(i).getNumberOfVotes() > maxVote){
-                maxVote = listOfAllCandidatesForParticularElectionTYpe.get(i).getNumberOfVotes();
+        for(int i = 0; i < listOfAllCandidatesForParticularElectionByIdNumber.size();i++){
+            if(listOfAllCandidatesForParticularElectionByIdNumber.get(i).getNumberOfVotes() > maxVote){
+                maxVote = listOfAllCandidatesForParticularElectionByIdNumber.get(i).getNumberOfVotes();
             }
         }
 
-        for(int i = 0; i < listOfAllCandidatesForParticularElectionTYpe.size();i++){
-            if(listOfAllCandidatesForParticularElectionTYpe.get(i).getNumberOfVotes() == maxVote){
-              candidateWithHighestVote =  listOfAllCandidatesForParticularElectionTYpe.get(i);
+        for(int i = 0; i < listOfAllCandidatesForParticularElectionByIdNumber.size();i++){
+            if(listOfAllCandidatesForParticularElectionByIdNumber.get(i).getNumberOfVotes() == maxVote){
+              candidateWithHighestVote =  listOfAllCandidatesForParticularElectionByIdNumber.get(i);
             }
         }
         return candidateWithHighestVote;
@@ -58,7 +62,7 @@ public class CandidateService implements ICandidateService{
     }
 
     @Override
-    public CandidateRegistrationResponse register(CandidateRegistrationRequest candidateRegistrationRequest) {
+    public CandidateRegistrationResponse register(CandidateRegistrationRequest candidateRegistrationRequest) throws WrongBirthDateException {
         CandidateRegistrationResponse candidateRegistrationResponse = new CandidateRegistrationResponse();
         List<PoliticalParty> politicalParties = iPoliticalService.findAllPoliticalParties();
         for(int i = 0; i < politicalParties.size(); i++){
@@ -67,6 +71,13 @@ public class CandidateService implements ICandidateService{
             }
         }
             candidateRegistrationResponse.setEligibilityStatus("you are eligible to run as candidate" );
+        List<Candidate> foundCandidates = findCandidatesByElectionIdentificationNumber(candidateRegistrationRequest.getElectionIdentificationNumber());
+        for(int i=0; i<foundCandidates.size();i++){
+            if(foundCandidates.get(i).getPoliticalPartyIdentificationNumber().equals(candidateRegistrationRequest.getPoliticalPartyIdentificationNumber())&&
+                    foundCandidates.get(i).getElectionType().equals(candidateRegistrationRequest.getElectionType())){
+                throw new IllegibleCandidateException("We cannot have two candidates from the same party running for the same position in the same election");
+            }
+        }
 
         Candidate newCandidate = new Candidate();
         newCandidate.setFirstName(candidateRegistrationRequest.getFirstName());
@@ -89,17 +100,21 @@ public class CandidateService implements ICandidateService{
 
         newCandidate.setBirthYear(candidateRegistrationRequest.getBirthYear());
 
-        SecureRandom generatedCardNumber= new SecureRandom();
-        String generatedValue = String.valueOf(generatedCardNumber.nextInt(1000000,9999999));
+        SecureRandom generatedCandidateIdNumber= new SecureRandom();
+        String generatedValue = String.valueOf(generatedCandidateIdNumber.nextInt(1000000,9999999));
+        newCandidate.setElectionType(candidateRegistrationRequest.getElectionType());
         newCandidate.setCandidateIdentificationNumber(generatedValue);
-        newCandidate.setPoliticalParty(candidateRegistrationRequest.getPoliticalParty());
         newCandidate.setPoliticalPartyIdentificationNumber(candidateRegistrationRequest.getPoliticalPartyIdentificationNumber());
-        newCandidate.setElection(candidateRegistrationRequest.getElection());
+        newCandidate.setElectionIdentificationNumber(candidateRegistrationRequest.getElectionIdentificationNumber());
         candidateRepository.save(newCandidate);
 
         candidateRegistrationResponse.setCandidateIdentificationNumber(generatedValue);
         return  candidateRegistrationResponse;
 
+    }
+
+    private List<Candidate> findCandidatesByElectionIdentificationNumber(String electionIdentificationNumber) {
+        return candidateRepository.findByElectionIdentificationNumber(electionIdentificationNumber);
     }
 
     @Override
@@ -119,6 +134,22 @@ public class CandidateService implements ICandidateService{
                     .response("welcome")
                     .build();
 
+    }
+
+    @Override
+    public Candidate findCandidate(String candidateIdentificationNumber) {
+        return candidateRepository.findByCandidateIdentificationNumber(candidateIdentificationNumber);
+    }
+
+    @Override
+    public List<Candidate> findAllCandidatesForAParticularElectionWithElectionIdentificationNumber(ElectionByIdRequest electionByIdRequest) {
+        return candidateRepository.findByElectionIdentificationNumber(electionByIdRequest.getElectionIdentificationNumber());
+    }
+
+    @Override
+    public void save(Candidate foundCandidate) {
+
+        candidateRepository.save(foundCandidate);
     }
 
 

@@ -20,8 +20,8 @@ public class CandidateRegistrationRequest {
     private String email;
     private String password;
     private String gender;
-    private PoliticalParty politicalParty;
+    private String electionType;
     private String politicalPartyIdentificationNumber;
-    private Election election;
+    private String ElectionIdentificationNumber;
 
 }
